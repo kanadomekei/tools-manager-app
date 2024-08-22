@@ -28,7 +28,7 @@ export default function Header() {
               onClick={handleLogout}
             >
               <FiLogOut />
-              <span>ログアウト</span>
+              <span>ログ���ウト</span>
             </Button>
           ) : (
             <Link href="/login" passHref>
