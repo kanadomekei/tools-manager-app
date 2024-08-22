@@ -7,14 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 function MainComponent() {
-  const [selectedCategory, setSelectedCategory] = React.useState("ide");
+  const [selectedCategory, setSelectedCategory] = React.useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const categories = [
+    { name: "すべて", id: "all" },
     { name: "IDE", id: "ide" },
     { name: "テキストエディタ", id: "text-editor" },
     { name: "バージョン管理", id: "version-control" },
     { name: "デバッガー", id: "debugger" },
+    { name: "ビルドツール", id: "build-tool" },
   ];
 
   const tools = [
@@ -39,7 +41,32 @@ function MainComponent() {
       status: "未使用",
       icon: "fas fa-laptop-code",
     },
+    {
+      name: "Chrome DevTools",
+      version: "94.0",
+      category: "デバッガー",
+      status: "使用中",
+      icon: "fas fa-bug",
+    },
+    {
+      name: "Webpack",
+      version: "5.54.0",
+      category: "ビルドツール",
+      status: "使用中",
+      icon: "fas fa-cogs",
+    },
+    {
+      name: "Sublime Text",
+      version: "4.0",
+      category: "テキストエディタ",
+      status: "未使用",
+      icon: "fas fa-edit",
+    },
   ];
+
+  const filteredTools = selectedCategory === "all"
+    ? tools
+    : tools.filter(tool => tool.category === categories.find(cat => cat.id === selectedCategory)?.name);
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-roboto text-[#333333]">
@@ -89,7 +116,7 @@ function MainComponent() {
         <section className="md:w-3/4">
           <h2 className="text-2xl font-semibold mb-6">マイツール</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {tools.map((tool, index) => (
+            {filteredTools.map((tool, index) => (
               <Card
                 key={index}
                 className="bg-white shadow-md hover:shadow-lg transition-shadow hover:scale-105"
