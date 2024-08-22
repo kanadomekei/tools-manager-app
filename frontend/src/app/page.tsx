@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import Link from 'next/link';
 
 function MainComponent() {
   const [selectedCategory, setSelectedCategory] = React.useState("all");
@@ -146,12 +147,14 @@ function MainComponent() {
                   </Badge>
                 </CardContent>
                 <CardFooter>
-                  <Button
-                    variant="outline"
-                    className="w-full hover:bg-[#3498DB] hover:text-white transition-colors"
-                  >
-                    詳細を見る
-                  </Button>
+                  <Link href={`/tool/${encodeURIComponent(tool.name.replace(/ /g, '-'))}`} passHref>
+                    <Button
+                      variant="outline"
+                      className="w-full hover:bg-[#3498DB] hover:text-white transition-colors"
+                    >
+                      詳細を見る
+                    </Button>
+                  </Link>
                 </CardFooter>
               </Card>
             ))}
