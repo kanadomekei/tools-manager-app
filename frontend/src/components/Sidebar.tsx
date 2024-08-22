@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Trash2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface Category {
   name: string;
@@ -9,22 +11,55 @@ interface Category {
 }
 
 interface SidebarProps {
-  categories: Category[];
+  initialCategories: Category[];
   selectedCategory: string;
-  isMobileMenuOpen: boolean;
   setSelectedCategory: (id: string) => void;
-  setIsAddCategoryDialogOpen: (isOpen: boolean) => void;
-  handleDeleteCategory: (id: string) => void;
+  onCategoriesChange: (categories: Category[]) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-  categories,
+  initialCategories,
   selectedCategory,
-  isMobileMenuOpen,
   setSelectedCategory,
-  setIsAddCategoryDialogOpen,
-  handleDeleteCategory
+  onCategoriesChange
 }) => {
+  const [categories, setCategories] = useState(initialCategories);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+
+  const handleAddCategory = () => {
+    if (newCategoryName.trim() !== "") {
+      const newId = newCategoryName.toLowerCase().replace(/\s+/g, '-');
+      const updatedCategories = [...categories, { name: newCategoryName, id: newId }];
+      setCategories(updatedCategories);
+      onCategoriesChange(updatedCategories);
+      setNewCategoryName("");
+      setIsAddCategoryDialogOpen(false);
+    }
+  };
+
+  const handleDeleteCategory = (categoryId: string) => {
+    if (categoryId === 'all') {
+      alert('「すべて」カテゴリーは削除できません。');
+      return;
+    }
+    setCategoryToDelete(categoryId);
+  };
+
+  const confirmDeleteCategory = () => {
+    if (categoryToDelete) {
+      const updatedCategories = categories.filter(cat => cat.id !== categoryToDelete);
+      setCategories(updatedCategories);
+      onCategoriesChange(updatedCategories);
+      if (selectedCategory === categoryToDelete) {
+        setSelectedCategory('all');
+      }
+      setCategoryToDelete(null);
+    }
+  };
+
   return (
     <aside className="md:w-1/4 mb-4 md:mb-0 md:pr-4">
       <div className="md:hidden mb-4">
@@ -81,6 +116,42 @@ const Sidebar: React.FC<SidebarProps> = ({
           ))}
         </ul>
       </nav>
+
+      <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>新しいカテゴリーを追加</DialogTitle>
+          </DialogHeader>
+          <Input
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            placeholder="カテゴリー名を入力"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddCategoryDialogOpen(false)}>
+              キャンセル
+            </Button>
+            <Button onClick={handleAddCategory}>追加</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={categoryToDelete !== null} onOpenChange={() => setCategoryToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>カテゴリーの削除</DialogTitle>
+          </DialogHeader>
+          <p>本当にこのカテゴリーを削除しますか？この操作は取り消せません。</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCategoryToDelete(null)}>
+              キャンセル
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteCategory}>
+              削除
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 };

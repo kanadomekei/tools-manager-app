@@ -11,89 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Trash2 } from 'lucide-react';
 import { Star } from 'lucide-react';
-
-// Sidebarコンポーネントをここに直接定義
-const Sidebar: React.FC<{
-  categories: { name: string; id: string }[];
-  selectedCategory: string;
-  isMobileMenuOpen: boolean;
-  setSelectedCategory: (id: string) => void;
-  setIsAddCategoryDialogOpen: (isOpen: boolean) => void;
-  handleDeleteCategory: (id: string) => void;
-}> = ({
-  categories,
-  selectedCategory,
-  isMobileMenuOpen,
-  setSelectedCategory,
-  setIsAddCategoryDialogOpen,
-  handleDeleteCategory
-}) => {
-  return (
-    <aside className="md:w-1/4 mb-4 md:mb-0 md:pr-4">
-      <div className="md:hidden mb-4">
-        <Button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="w-full bg-[#3498DB] text-white"
-        >
-          <i className="fas fa-bars mr-2"></i> カテゴリーメニュー
-        </Button>
-      </div>
-      <nav className={cn("md:block", isMobileMenuOpen ? "block" : "hidden")}>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">カテゴリー</h2>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-[#3498DB] border-[#3498DB] hover:bg-[#3498DB] hover:text-white"
-            onClick={() => setIsAddCategoryDialogOpen(true)}
-          >
-            <i className="fas fa-plus mr-1"></i> 追加
-          </Button>
-        </div>
-        <ul>
-          {categories.map((category) => (
-            <li key={category.id} className="mb-2 flex items-center">
-              <div className="flex-grow relative">
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "w-full text-left pr-10",
-                    selectedCategory === category.id
-                      ? "bg-[#3498DB] text-white"
-                      : "hover:bg-[#3498DB] hover:bg-opacity-10"
-                  )}
-                  onClick={() => setSelectedCategory(category.id)}
-                >
-                  {category.name}
-                </Button>
-                {category.id !== 'all' && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-500 hover:bg-red-100 hover:text-red-700"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteCategory(category.id);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
-  );
-};
+import Sidebar from '@/components/Sidebar';
 
 function MainComponent() {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
-
   const [categories, setCategories] = useState([
     { name: "すべて", id: "all" },
     { name: "IDE", id: "ide" },
@@ -158,36 +79,6 @@ function MainComponent() {
     ? tools
     : tools.filter(tool => tool.category === categories.find(cat => cat.id === selectedCategory)?.name);
 
-  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
-
-  const handleAddCategory = () => {
-    if (newCategoryName.trim() !== "") {
-      const newId = newCategoryName.toLowerCase().replace(/\s+/g, '-');
-      setCategories([...categories, { name: newCategoryName, id: newId }]);
-      setNewCategoryName("");
-      setIsAddCategoryDialogOpen(false);
-    }
-  };
-
-  const handleDeleteCategory = (categoryId: string) => {
-    if (categoryId === 'all') {
-      alert('「すべて」カテゴリーは削除できません。');
-      return;
-    }
-    setCategoryToDelete(categoryId);
-  };
-
-  const confirmDeleteCategory = () => {
-    if (categoryToDelete) {
-      const updatedCategories = categories.filter(cat => cat.id !== categoryToDelete);
-      setCategories(updatedCategories);
-      if (selectedCategory === categoryToDelete) {
-        setSelectedCategory('all');
-      }
-      setCategoryToDelete(null);
-    }
-  };
-
   const handleRatingChange = (toolName: string, newRating: number) => {
     setTools(prevTools =>
       prevTools.map(tool =>
@@ -215,12 +106,10 @@ function MainComponent() {
 
       <main className="container mx-auto p-4 md:flex">
         <Sidebar
-          categories={categories}
+          initialCategories={categories}
           selectedCategory={selectedCategory}
-          isMobileMenuOpen={isMobileMenuOpen}
           setSelectedCategory={setSelectedCategory}
-          setIsAddCategoryDialogOpen={setIsAddCategoryDialogOpen}
-          handleDeleteCategory={handleDeleteCategory}
+          onCategoriesChange={setCategories}
         />
 
         <section className="md:w-3/4">
@@ -275,42 +164,6 @@ function MainComponent() {
           </div>
         </section>
       </main>
-
-      <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>新しいカテゴリーを追加</DialogTitle>
-          </DialogHeader>
-          <Input
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            placeholder="カテゴリー名を入力"
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddCategoryDialogOpen(false)}>
-              キャンセル
-            </Button>
-            <Button onClick={handleAddCategory}>追加</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={categoryToDelete !== null} onOpenChange={() => setCategoryToDelete(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>カテゴリーの削除</DialogTitle>
-          </DialogHeader>
-          <p>本当にこのカテゴリーを削除しますか？この操作は取り消せません。</p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCategoryToDelete(null)}>
-              キャンセル
-            </Button>
-            <Button variant="destructive" onClick={confirmDeleteCategory}>
-              削除
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <div className="fixed bottom-8 right-8">
         <Link href="/add-tool" passHref>
