@@ -12,93 +12,115 @@ export default function ToolDetail() {
   const params = useParams();
   const toolName = decodeURIComponent(params.name as string).replace(/-/g, ' ');
 
-  // ツールの詳細情報（実際のアプリケーションではAPIから取得するなど）
   const toolDetails = {
     name: toolName,
     version: "1.60.0",
     category: "テキストエディタ",
     status: "使用中",
     icon: "fas fa-code",
-  };
-
-  return (
-    <div className="min-h-screen bg-[#F5F7FA] font-roboto text-[#333333]">
-      <Header />
-      <main className="max-w-4xl mx-auto px-4">
-        <Link href="/" passHref>
-          <Button variant="outline" className="mb-4">
-            <i className="fas fa-arrow-left mr-2"></i>戻る
-          </Button>
-        </Link>
-        <Card className="bg-white shadow-md">
-          <CardHeader className="flex flex-row items-center space-x-4 pb-2">
-            <i className={`${toolDetails.icon} text-4xl text-[#3498DB]`}></i>
-            <div>
-              <CardTitle className="text-3xl font-bold">{toolDetails.name}</CardTitle>
-              <CardDescription className="text-lg">バージョン {toolDetails.version}</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2 mb-6">
-              <Badge variant="secondary" className="text-sm">{toolDetails.category}</Badge>
-              <Badge variant={toolDetails.status === "使用中" ? "default" : "secondary"} className="text-sm">
-                {toolDetails.status}
-              </Badge>
-            </div>
-
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">概要</h2>
-              <p>{toolDetails.name}は、Microsoftが開発した無料のソースコードエディタです。デバッグ、タスク実行、バージョン管理などの機能を備えています。</p>
-            </section>
-
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">主な機能</h2>
-              <ul className="list-disc list-inside">
-                <li>IntelliSenseによるコード補完</li>
-                <li>デバッグ機能</li>
-                <li>Git統合</li>
-                <li>拡張機能によるカスタマイズ</li>
-              </ul>
-            </section>
-
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">インストール方法</h2>
-              <ol className="list-decimal list-inside">
-                <li>公式サイトからインストーラーをダウンロード</li>
-                <li>インストーラーを実行し、画面の指示に従う</li>
-                <li>インストールが完了後、{toolDetails.name}を起動</li>
-              </ol>
-            </section>
-
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Bashスクリプト</h2>
-              <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
-                <code>
-                  {`#!/bin/bash
+    description: "Microsoftが開発した無料のソースコードエディタです。デバッグ、タスク実行、バージョン管理などの機能を備えています。",
+    mainFeatures: [
+      "IntelliSenseによるコード補完",
+      "デバッグ機能",
+      "Git統合",
+      "拡張機能によるカスタマイズ"
+    ],
+    installSteps: [
+      "公式サイトからインストーラーをダウンロード",
+      "インストーラーを実行し、画面の指示に従う",
+      "インストールが完了後、Visual Studio Codeを起動"
+    ],
+    bashScript: `#!/bin/bash
 sudo apt update
 sudo apt install software-properties-common apt-transport-https wget -y
 wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
 sudo apt update
-sudo apt install code`}
-                </code>
-              </pre>
-            </section>
+sudo apt install code`,
+    officialSite: "https://code.visualstudio.com/",
+    supportedOS: "Windows 10+, macOS 10.11+, Linux",
+    lastUpdated: "2024-07-15"
+  };
 
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">その他の情報</h2>
-              <p><strong>カテゴリー:</strong> テキストエディタ</p>
-              <p><strong>公式サイト:</strong> <a href="https://code.visualstudio.com/" className="text-blue-600 hover:underline">https://code.visualstudio.com/</a></p>
-              <p><strong>対応OS:</strong> Windows 10+, macOS 10.11+, Linux</p>
-              <p><strong>最終更新日:</strong> 2024-07-15</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#F5F7FA] to-[#E4E8F0] font-roboto text-[#333333]">
+      <Header />
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <Link href="/" passHref>
+            <Button variant="outline" className="hover:bg-white/20 transition-colors">
+              <i className="fas fa-arrow-left mr-2"></i>戻る
+            </Button>
+          </Link>
+          <Link href={`/tool/${encodeURIComponent(toolName.replace(/ /g, '-'))}/edit`} passHref>
+            <Button className="bg-[#3498DB] text-white hover:bg-[#2980B9] transition-colors">
+              <i className="fas fa-edit mr-2"></i>編集
+            </Button>
+          </Link>
+        </div>
+        <Card className="bg-white shadow-lg rounded-xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-[#3498DB] to-[#2980B9] text-white p-6">
+            <div className="flex items-center space-x-4">
+              <i className={`${toolDetails.icon} text-5xl`}></i>
+              <div>
+                <CardTitle className="text-3xl font-bold">{toolDetails.name}</CardTitle>
+                <CardDescription className="text-xl text-white/80">バージョン {toolDetails.version}</CardDescription>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 mt-4">
+              <Badge variant="secondary" className="bg-white/20 text-white">{toolDetails.category}</Badge>
+              <Badge variant={toolDetails.status === "使用中" ? "default" : "secondary"} className="bg-green-500 text-white">
+                {toolDetails.status}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6 space-y-8">
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">概要</h2>
+              <p className="text-gray-700 leading-relaxed">{toolDetails.description}</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-2">参考文献</h2>
-              <ul className="list-disc list-inside">
-                <li><a href="https://code.visualstudio.com/docs" className="text-blue-600 hover:underline">Visual Studio Code Documentation</a></li>
-                <li><a href="https://github.com/microsoft/vscode" className="text-blue-600 hover:underline">GitHub - microsoft/vscode</a></li>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">主な機能</h2>
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                {toolDetails.mainFeatures.map((feature, index) => (
+                  <li key={index}>{feature}</li>
+                ))}
               </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">インストール方法</h2>
+              <ol className="list-decimal list-inside space-y-2 text-gray-700">
+                {toolDetails.installSteps.map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </ol>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">Bashスクリプト</h2>
+              <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+                <code>{toolDetails.bashScript}</code>
+              </pre>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">その他の情報</h2>
+              <div className="grid grid-cols-2 gap-4 text-gray-700">
+                <div>
+                  <p><strong>公式サイト:</strong></p>
+                  <a href={toolDetails.officialSite} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{toolDetails.officialSite}</a>
+                </div>
+                <div>
+                  <p><strong>対応OS:</strong></p>
+                  <p>{toolDetails.supportedOS}</p>
+                </div>
+                <div>
+                  <p><strong>最終更新日:</strong></p>
+                  <p>{toolDetails.lastUpdated}</p>
+                </div>
+              </div>
             </section>
           </CardContent>
         </Card>
