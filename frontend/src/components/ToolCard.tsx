@@ -1,27 +1,42 @@
 'use client';
 
-import Image from 'next/image';
+import React from 'react';
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from 'next/link';
+import { cn } from "@/lib/utils";
 
 interface ToolCardProps {
   name: string;
   description: string;
   imageSrc: string;
   isInstalled: boolean;
+  key: string;
 }
 
 export default function ToolCard({ name, description, imageSrc, isInstalled }: ToolCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center">
-      <Image src={imageSrc} alt={name} width={64} height={64} className="mb-2" />
-      <h2 className="text-lg font-semibold mb-1">{name}</h2>
-      <p className="text-sm text-gray-600 mb-2">{description}</p>
-      <button
-        className={`px-4 py-2 rounded-full ${
-          isInstalled ? 'bg-gray-200 text-gray-700' : 'bg-blue-500 text-white'
-        }`}
-      >
-        {isInstalled ? '開発を開始' : 'インストール'}
-      </button>
-    </div>
+    <Card className="bg-white shadow-md hover:shadow-lg transition-shadow hover:scale-105">
+      <CardHeader>
+        <div className="flex items-center space-x-4">
+          <img src={imageSrc} alt={name} className="w-10 h-10 object-cover" />
+          <div>
+            <CardTitle className="text-lg font-semibold">{name}</CardTitle>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <CardDescription className="text-sm">{description}</CardDescription>
+      </CardContent>
+      <CardFooter>
+        <Badge
+          variant={isInstalled ? "default" : "secondary"}
+          className={cn(isInstalled ? "bg-[#3498DB]" : "bg-gray-300")}
+        >
+          {isInstalled ? "インストール済み" : "未インストール"}
+        </Badge>
+      </CardFooter>
+    </Card>
   );
 }
