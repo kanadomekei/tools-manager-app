@@ -2,40 +2,46 @@
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
+import { FiCode, FiLogIn, FiLogOut } from 'react-icons/fi'; // アイコンをインポート
 
 export default function Header() {
     const router = useRouter();
-    const isLoggedIn = false; // ここで実際のログイン状態を確認する処理を実装します
+    const isLoggedIn = false; // 実際のログイン状態確認処理
 
     const handleLogout = () => {
-        // ログアウト処理を実装します
+        // ログアウト処理
         console.log('ログアウト処理');
         router.push('/login');
     };
 
     return (
-      <header className="bg-[#1E2A3B] text-white p-4 flex justify-between items-center">
-        <Link href="/" className="hover:text-gray-300 transition-colors">
-          <h1 className="text-2xl font-bold">プログラミングツール管理アプリ</h1>
-        </Link>
-        {isLoggedIn ? (
-          <Button
-            variant="outline"
-            className="text-white border-white hover:bg-[#3498DB] transition-colors"
-            onClick={handleLogout}
-          >
-            ログアウト
-          </Button>
-        ) : (
-          <Link href="/login" passHref>
-            <Button
-              variant="outline"
-              className="text-white border-white hover:bg-[#3498DB] transition-colors"
-            >
-              ログイン
-            </Button>
+      <header className="bg-gradient-to-r from-[#2C3E50] to-[#3498DB] text-white p-4 shadow-md">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link href="/" className="flex items-center space-x-2 hover:text-gray-200 transition-colors">
+            <FiCode className="text-2xl" />
+            <h1 className="text-xl font-semibold">プログラミングツール管理</h1>
           </Link>
-        )}
+          {isLoggedIn ? (
+            <Button
+              variant="ghost"
+              className="text-white hover:bg-white hover:bg-opacity-20 transition-colors flex items-center space-x-2"
+              onClick={handleLogout}
+            >
+              <FiLogOut />
+              <span>ログアウト</span>
+            </Button>
+          ) : (
+            <Link href="/login" passHref>
+              <Button
+                variant="ghost"
+                className="text-white hover:bg-white hover:bg-opacity-20 transition-colors flex items-center space-x-2"
+              >
+                <FiLogIn />
+                <span>ログイン</span>
+              </Button>
+            </Link>
+          )}
+        </div>
       </header>
     );
   }
