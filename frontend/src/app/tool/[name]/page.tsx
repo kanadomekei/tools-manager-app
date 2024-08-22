@@ -210,20 +210,6 @@ sudo pacman -Rs visual-studio-code-bin`
                 ))}
               </ul>
             </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">その他の情報</h2>
-              <div className="grid grid-cols-2 gap-4 text-gray-700">
-                <div>
-                  <p><strong>対応OS:</strong></p>
-                  <p>{toolDetails.supportedOS}</p>
-                </div>
-                <div>
-                  <p><strong>最終更新日:</strong></p>
-                  <p>{toolDetails.lastUpdated}</p>
-                </div>
-              </div>
-            </section>
           </CardContent>
         </Card>
       </main>
