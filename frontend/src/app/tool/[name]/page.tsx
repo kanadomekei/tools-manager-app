@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Header from '@/components/Header';
 
 export default function ToolDetail() {
   const params = useParams();
@@ -21,8 +22,9 @@ export default function ToolDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] font-roboto text-[#333333] p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#F5F7FA] font-roboto text-[#333333]">
+      <Header />
+      <main className="max-w-4xl mx-auto px-4">
         <Link href="/" passHref>
           <Button variant="outline" className="mb-4">
             <i className="fas fa-arrow-left mr-2"></i>戻る
@@ -100,7 +102,7 @@ sudo apt install code`}
             </section>
           </CardContent>
         </Card>
-      </div>
+      </main>
     </div>
   );
 }

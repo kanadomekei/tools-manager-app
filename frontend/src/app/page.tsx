@@ -6,7 +6,7 @@ import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription }
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from 'next/link';
-
+import Header from '@/components/Header';
 function MainComponent() {
   const [selectedCategory, setSelectedCategory] = React.useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -71,15 +71,7 @@ function MainComponent() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-roboto text-[#333333]">
-      <header className="bg-[#1E2A3B] text-white p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">プログラミングツール管理アプリ</h1>
-        <Button
-          variant="outline"
-          className="text-white border-white hover:bg-[#3498DB] transition-colors"
-        >
-          ログイン
-        </Button>
-      </header>
+      <Header />
 
       <main className="container mx-auto p-4 md:flex">
         <aside className="md:w-1/4 mb-4 md:mb-0 md:pr-4">
