@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import Header from '@/components/Header';
+import ToolHeader from '@/components/ToolHeader';
+import ToolDescription from '@/components/ToolDescription';
+import InstallationGuide from '@/components/InstallationGuide';
+import UninstallationGuide from '@/components/UninstallationGuide';
+import ExternalLinks from '@/components/ExternalLinks';
+import RelatedTools from '@/components/RelatedTools';
 
 export default function ToolDetail() {
   const params = useParams();
@@ -58,15 +63,6 @@ sudo pacman -Rs visual-studio-code-bin`
     lastUpdated: "2024-07-15"
   };
 
-  const [copiedScript, setCopiedScript] = useState<string | null>(null);
-
-  const copyToClipboard = (text: string, scriptType: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopiedScript(scriptType);
-      setTimeout(() => setCopiedScript(null), 2000);
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F5F7FA] to-[#E4E8F0] font-roboto text-[#333333]">
       <Header />
@@ -84,132 +80,13 @@ sudo pacman -Rs visual-studio-code-bin`
           </Link>
         </div>
         <Card className="bg-white shadow-lg rounded-xl overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-[#3498DB] to-[#2980B9] text-white p-6">
-            <div className="flex items-center space-x-4">
-              <i className={`${toolDetails.icon} text-5xl`}></i>
-              <div>
-                <CardTitle className="text-3xl font-bold">{toolDetails.name}</CardTitle>
-                <CardDescription className="text-xl text-white/80">バージョン {toolDetails.version}</CardDescription>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2 mt-4">
-              <Badge variant="secondary" className="bg-white/20 text-white">{toolDetails.category}</Badge>
-              <Badge variant={toolDetails.status === "使用中" ? "default" : "secondary"} className="bg-green-500 text-white">
-                {toolDetails.status}
-              </Badge>
-            </div>
-          </CardHeader>
+          <ToolHeader toolDetails={toolDetails} />
           <CardContent className="p-6 space-y-8">
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">概要</h2>
-              <p className="text-gray-700 leading-relaxed">{toolDetails.description}</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">主な機能</h2>
-              <ul className="list-disc list-inside space-y-2 text-gray-700">
-                {toolDetails.mainFeatures.map((feature, index) => (
-                  <li key={index}>{feature}</li>
-                ))}
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">インストール方法</h2>
-              <div className="space-y-6">
-                {Object.entries(toolDetails.installScripts).map(([os, script]) => (
-                  <div key={os} className="bg-gray-50 rounded-lg shadow-sm overflow-hidden">
-                    <div className="bg-gray-100 px-4 py-2 flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-[#34495E]">{os === 'ubuntu' ? 'Ubuntu' : 'Arch Linux'}</h3>
-                      <Button
-                        className={`px-3 py-1 rounded-full text-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-opacity-50 ${
-                          copiedScript === `${os}-install`
-                            ? 'bg-green-500 text-white focus:ring-green-400'
-                            : 'bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-400'
-                        }`}
-                        onClick={() => copyToClipboard(script, `${os}-install`)}
-                      >
-                        {copiedScript === `${os}-install` ? (
-                          <span className="flex items-center">
-                            <i className="fas fa-check mr-1"></i>コピー済み
-                          </span>
-                        ) : (
-                          <span className="flex items-center">
-                            <i className="fas fa-copy mr-1"></i>コピー
-                          </span>
-                        )}
-                      </Button>
-                    </div>
-                    <pre className="p-4 overflow-x-auto text-sm">
-                      <code>{script}</code>
-                    </pre>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">アンインストール方法</h2>
-              <div className="space-y-6">
-                {Object.entries(toolDetails.uninstallScripts).map(([os, script]) => (
-                  <div key={os} className="bg-gray-50 rounded-lg shadow-sm overflow-hidden">
-                    <div className="bg-gray-100 px-4 py-2 flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-[#34495E]">{os === 'ubuntu' ? 'Ubuntu' : 'Arch Linux'}</h3>
-                      <Button
-                        className={`px-3 py-1 rounded-full text-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-opacity-50 ${
-                          copiedScript === `${os}-uninstall`
-                            ? 'bg-green-500 text-white focus:ring-green-400'
-                            : 'bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-400'
-                        }`}
-                        onClick={() => copyToClipboard(script, `${os}-uninstall`)}
-                      >
-                        {copiedScript === `${os}-uninstall` ? (
-                          <span className="flex items-center">
-                            <i className="fas fa-check mr-1"></i>コピー済み
-                          </span>
-                        ) : (
-                          <span className="flex items-center">
-                            <i className="fas fa-copy mr-1"></i>コピー
-                          </span>
-                        )}
-                      </Button>
-                    </div>
-                    <pre className="p-4 overflow-x-auto text-sm">
-                      <code>{script}</code>
-                    </pre>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">公式サイト</h2>
-              <a href={toolDetails.officialSite} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{toolDetails.officialSite}</a>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">参考サイト</h2>
-              <ul className="list-disc list-inside space-y-2 text-gray-700">
-                {toolDetails.referenceSites.map((site, index) => (
-                  <li key={index}>
-                    <a href={site.url} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{site.name}</a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">関連ツール</h2>
-              <ul className="list-disc list-inside space-y-2 text-gray-700">
-                {toolDetails.relatedTools.map((tool, index) => (
-                  <li key={index}>
-                    <Link href={tool.url} className="text-blue-600 hover:underline">
-                      {tool.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <ToolDescription toolDetails={toolDetails} />
+            <InstallationGuide installScripts={toolDetails.installScripts} />
+            <UninstallationGuide uninstallScripts={toolDetails.uninstallScripts} />
+            <ExternalLinks officialSite={toolDetails.officialSite} referenceSites={toolDetails.referenceSites} />
+            <RelatedTools relatedTools={toolDetails.relatedTools} />
           </CardContent>
         </Card>
       </main>
