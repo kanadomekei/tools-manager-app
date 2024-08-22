@@ -9,7 +9,8 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Trash2 } from 'lucide-react'; // Lucide Reactアイコンをインポート
+import { Trash2 } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 function MainComponent() {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -26,13 +27,14 @@ function MainComponent() {
     { name: "ビルドツール", id: "build-tool" },
   ]);
 
-  const tools = [
+  const [tools, setTools] = useState([
     {
       name: "Visual Studio Code",
       version: "1.60.0",
       category: "テキストエディタ",
       status: "使用中",
       icon: "fas fa-code",
+      rating: 4,
     },
     {
       name: "Git",
@@ -40,6 +42,7 @@ function MainComponent() {
       category: "バージョン管理",
       status: "使用中",
       icon: "fas fa-code-branch",
+      rating: 5,
     },
     {
       name: "PyCharm",
@@ -47,6 +50,7 @@ function MainComponent() {
       category: "IDE",
       status: "未使用",
       icon: "fas fa-laptop-code",
+      rating: 3,
     },
     {
       name: "Chrome DevTools",
@@ -54,6 +58,7 @@ function MainComponent() {
       category: "デバッガー",
       status: "使用中",
       icon: "fas fa-bug",
+      rating: 4,
     },
     {
       name: "Webpack",
@@ -61,6 +66,7 @@ function MainComponent() {
       category: "ビルドツール",
       status: "使用中",
       icon: "fas fa-cogs",
+      rating: 4,
     },
     {
       name: "Sublime Text",
@@ -68,8 +74,9 @@ function MainComponent() {
       category: "テキストエディタ",
       status: "未使用",
       icon: "fas fa-edit",
+      rating: 3,
     },
-  ];
+  ]);
 
   const filteredTools = selectedCategory === "all"
     ? tools
@@ -105,6 +112,27 @@ function MainComponent() {
     }
   };
 
+  const handleRatingChange = (toolName: string, newRating: number) => {
+    setTools(prevTools =>
+      prevTools.map(tool =>
+        tool.name === toolName ? { ...tool, rating: newRating } : tool
+      )
+    );
+  };
+
+  const renderStars = (toolName: string, rating: number) => {
+    return Array(5).fill(0).map((_, i) => (
+      <Star
+        key={i}
+        className={cn(
+          "w-4 h-4 cursor-pointer",
+          i < rating ? "text-yellow-400 fill-current" : "text-gray-300"
+        )}
+        onClick={() => handleRatingChange(toolName, i + 1)}
+      />
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-roboto text-[#333333]">
       <Header />
@@ -134,17 +162,19 @@ function MainComponent() {
             <ul>
               {categories.map((category) => (
                 <li key={category.id} className="mb-2 flex items-center">
-                  <Button
-                    variant="ghost"
-                    className={cn(
-                      "flex-grow text-left pr-10 relative",
-                      selectedCategory === category.id
-                        ? "bg-[#3498DB] text-white"
-                        : "hover:bg-[#3498DB] hover:bg-opacity-10"
-                    )}
-                    onClick={() => setSelectedCategory(category.id)}
-                  >
-                    {category.name}
+                  <div className="flex-grow relative">
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "w-full text-left pr-10",
+                        selectedCategory === category.id
+                          ? "bg-[#3498DB] text-white"
+                          : "hover:bg-[#3498DB] hover:bg-opacity-10"
+                      )}
+                      onClick={() => setSelectedCategory(category.id)}
+                    >
+                      {category.name}
+                    </Button>
                     {category.id !== 'all' && (
                       <Button
                         variant="ghost"
@@ -158,7 +188,7 @@ function MainComponent() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
-                  </Button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -188,14 +218,19 @@ function MainComponent() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm mb-2">カテゴリー: {tool.category}</p>
-                  <Badge
-                    variant={tool.status === "���用中" ? "default" : "secondary"}
-                    className={cn(
-                      tool.status === "使用中" ? "bg-[#3498DB]" : "bg-gray-300"
-                    )}
-                  >
-                    {tool.status}
-                  </Badge>
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge
+                      variant={tool.status === "使用中" ? "default" : "secondary"}
+                      className={cn(
+                        tool.status === "使用中" ? "bg-[#3498DB]" : "bg-gray-300"
+                      )}
+                    >
+                      {tool.status}
+                    </Badge>
+                    <div className="flex">
+                      {renderStars(tool.name, tool.rating)}
+                    </div>
+                  </div>
                 </CardContent>
                 <CardFooter>
                   <Link href={`/tool/${encodeURIComponent(tool.name.replace(/ /g, '-'))}`} passHref>
