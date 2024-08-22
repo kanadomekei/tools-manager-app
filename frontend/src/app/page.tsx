@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Trash2 } from 'lucide-react'; // Lucide Reactアイコンをインポート
 
 function MainComponent() {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -74,6 +75,8 @@ function MainComponent() {
     ? tools
     : tools.filter(tool => tool.category === categories.find(cat => cat.id === selectedCategory)?.name);
 
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+
   const handleAddCategory = () => {
     if (newCategoryName.trim() !== "") {
       const newId = newCategoryName.toLowerCase().replace(/\s+/g, '-');
@@ -88,10 +91,17 @@ function MainComponent() {
       alert('「すべて」カテゴリーは削除できません。');
       return;
     }
-    const updatedCategories = categories.filter(cat => cat.id !== categoryId);
-    setCategories(updatedCategories);
-    if (selectedCategory === categoryId) {
-      setSelectedCategory('all');
+    setCategoryToDelete(categoryId);
+  };
+
+  const confirmDeleteCategory = () => {
+    if (categoryToDelete) {
+      const updatedCategories = categories.filter(cat => cat.id !== categoryToDelete);
+      setCategories(updatedCategories);
+      if (selectedCategory === categoryToDelete) {
+        setSelectedCategory('all');
+      }
+      setCategoryToDelete(null);
     }
   };
 
@@ -123,11 +133,11 @@ function MainComponent() {
             </div>
             <ul>
               {categories.map((category) => (
-                <li key={category.id} className="mb-2 flex items-center justify-between">
+                <li key={category.id} className="mb-2 flex items-center">
                   <Button
                     variant="ghost"
                     className={cn(
-                      "w-full text-left",
+                      "flex-grow text-left pr-10 relative",
                       selectedCategory === category.id
                         ? "bg-[#3498DB] text-white"
                         : "hover:bg-[#3498DB] hover:bg-opacity-10"
@@ -135,17 +145,20 @@ function MainComponent() {
                     onClick={() => setSelectedCategory(category.id)}
                   >
                     {category.name}
+                    {category.id !== 'all' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-500 hover:bg-red-100 hover:text-red-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteCategory(category.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </Button>
-                  {category.id !== 'all' && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-500 hover:bg-red-100 hover:text-red-700"
-                      onClick={() => handleDeleteCategory(category.id)}
-                    >
-                      <i className="fas fa-trash-alt"></i>
-                    </Button>
-                  )}
                 </li>
               ))}
             </ul>
@@ -176,7 +189,7 @@ function MainComponent() {
                 <CardContent>
                   <p className="text-sm mb-2">カテゴリー: {tool.category}</p>
                   <Badge
-                    variant={tool.status === "使用中" ? "default" : "secondary"}
+                    variant={tool.status === "���用中" ? "default" : "secondary"}
                     className={cn(
                       tool.status === "使用中" ? "bg-[#3498DB]" : "bg-gray-300"
                     )}
@@ -215,6 +228,23 @@ function MainComponent() {
               キャンセル
             </Button>
             <Button onClick={handleAddCategory}>追加</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={categoryToDelete !== null} onOpenChange={() => setCategoryToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>カテゴリーの削除</DialogTitle>
+          </DialogHeader>
+          <p>本当にこのカテゴリーを削除しますか？この操作は取り消せません。</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCategoryToDelete(null)}>
+              キャンセル
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteCategory}>
+              削除
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
