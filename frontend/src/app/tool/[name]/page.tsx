@@ -116,69 +116,69 @@ sudo pacman -Rs visual-studio-code-bin`
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">インストール方法</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Ubuntu</h3>
-                  <div className="relative">
-                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-                      <code>{toolDetails.installScripts.ubuntu}</code>
+              <div className="space-y-6">
+                {Object.entries(toolDetails.installScripts).map(([os, script]) => (
+                  <div key={os} className="bg-gray-50 rounded-lg shadow-sm overflow-hidden">
+                    <div className="bg-gray-100 px-4 py-2 flex justify-between items-center">
+                      <h3 className="text-lg font-semibold text-[#34495E]">{os === 'ubuntu' ? 'Ubuntu' : 'Arch Linux'}</h3>
+                      <Button
+                        className={`px-3 py-1 rounded-full text-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-opacity-50 ${
+                          copiedScript === `${os}-install`
+                            ? 'bg-green-500 text-white focus:ring-green-400'
+                            : 'bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-400'
+                        }`}
+                        onClick={() => copyToClipboard(script, `${os}-install`)}
+                      >
+                        {copiedScript === `${os}-install` ? (
+                          <span className="flex items-center">
+                            <i className="fas fa-check mr-1"></i>コピー済み
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            <i className="fas fa-copy mr-1"></i>コピー
+                          </span>
+                        )}
+                      </Button>
+                    </div>
+                    <pre className="p-4 overflow-x-auto text-sm">
+                      <code>{script}</code>
                     </pre>
-                    <Button
-                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
-                      onClick={() => copyToClipboard(toolDetails.installScripts.ubuntu, 'ubuntu-install')}
-                    >
-                      {copiedScript === 'ubuntu-install' ? 'コピーしました！' : 'コピー'}
-                    </Button>
                   </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Arch Linux</h3>
-                  <div className="relative">
-                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-                      <code>{toolDetails.installScripts.arch}</code>
-                    </pre>
-                    <Button
-                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
-                      onClick={() => copyToClipboard(toolDetails.installScripts.arch, 'arch-install')}
-                    >
-                      {copiedScript === 'arch-install' ? 'コピーしました！' : 'コピー'}
-                    </Button>
-                  </div>
-                </div>
+                ))}
               </div>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">アンインストール方法</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Ubuntu</h3>
-                  <div className="relative">
-                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-                      <code>{toolDetails.uninstallScripts.ubuntu}</code>
+              <div className="space-y-6">
+                {Object.entries(toolDetails.uninstallScripts).map(([os, script]) => (
+                  <div key={os} className="bg-gray-50 rounded-lg shadow-sm overflow-hidden">
+                    <div className="bg-gray-100 px-4 py-2 flex justify-between items-center">
+                      <h3 className="text-lg font-semibold text-[#34495E]">{os === 'ubuntu' ? 'Ubuntu' : 'Arch Linux'}</h3>
+                      <Button
+                        className={`px-3 py-1 rounded-full text-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-opacity-50 ${
+                          copiedScript === `${os}-uninstall`
+                            ? 'bg-green-500 text-white focus:ring-green-400'
+                            : 'bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-400'
+                        }`}
+                        onClick={() => copyToClipboard(script, `${os}-uninstall`)}
+                      >
+                        {copiedScript === `${os}-uninstall` ? (
+                          <span className="flex items-center">
+                            <i className="fas fa-check mr-1"></i>コピー済み
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            <i className="fas fa-copy mr-1"></i>コピー
+                          </span>
+                        )}
+                      </Button>
+                    </div>
+                    <pre className="p-4 overflow-x-auto text-sm">
+                      <code>{script}</code>
                     </pre>
-                    <Button
-                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
-                      onClick={() => copyToClipboard(toolDetails.uninstallScripts.ubuntu, 'ubuntu-uninstall')}
-                    >
-                      {copiedScript === 'ubuntu-uninstall' ? 'コピーしました！' : 'コピー'}
-                    </Button>
                   </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Arch Linux</h3>
-                  <div className="relative">
-                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-                      <code>{toolDetails.uninstallScripts.arch}</code>
-                    </pre>
-                    <Button
-                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
-                      onClick={() => copyToClipboard(toolDetails.uninstallScripts.arch, 'arch-uninstall')}
-                    >
-                      {copiedScript === 'arch-uninstall' ? 'コピーしました！' : 'コピー'}
-                    </Button>
-                  </div>
-                </div>
+                ))}
               </div>
             </section>
 
