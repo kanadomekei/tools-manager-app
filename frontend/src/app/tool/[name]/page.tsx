@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -25,21 +25,46 @@ export default function ToolDetail() {
       "Git統合",
       "拡張機能によるカスタマイズ"
     ],
-    installSteps: [
-      "公式サイトからインストーラーをダウンロード",
-      "インストーラーを実行し、画面の指示に従う",
-      "インストールが完了後、Visual Studio Codeを起動"
-    ],
-    bashScript: `#!/bin/bash
+    installScripts: {
+      ubuntu: `#!/bin/bash
 sudo apt update
 sudo apt install software-properties-common apt-transport-https wget -y
 wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
 sudo apt update
 sudo apt install code`,
+      arch: `#!/bin/bash
+sudo pacman -Syu
+sudo pacman -S visual-studio-code-bin`
+    },
+    uninstallScripts: {
+      ubuntu: `#!/bin/bash
+sudo apt remove code
+sudo apt autoremove`,
+      arch: `#!/bin/bash
+sudo pacman -Rs visual-studio-code-bin`
+    },
     officialSite: "https://code.visualstudio.com/",
+    referenceSites: [
+      { name: "Visual Studio Code ドキュメント", url: "https://code.visualstudio.com/docs" },
+      { name: "VS Code Can Do That?", url: "https://vscodecandothat.com/" },
+    ],
+    relatedTools: [
+      { name: "Sublime Text", url: "/tool/sublime-text" },
+      { name: "Atom", url: "/tool/atom" },
+      { name: "WebStorm", url: "/tool/webstorm" },
+    ],
     supportedOS: "Windows 10+, macOS 10.11+, Linux",
     lastUpdated: "2024-07-15"
+  };
+
+  const [copiedScript, setCopiedScript] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, scriptType: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedScript(scriptType);
+      setTimeout(() => setCopiedScript(null), 2000);
+    });
   };
 
   return (
@@ -91,27 +116,104 @@ sudo apt install code`,
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">インストール方法</h2>
-              <ol className="list-decimal list-inside space-y-2 text-gray-700">
-                {toolDetails.installSteps.map((step, index) => (
-                  <li key={index}>{step}</li>
-                ))}
-              </ol>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Ubuntu</h3>
+                  <div className="relative">
+                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+                      <code>{toolDetails.installScripts.ubuntu}</code>
+                    </pre>
+                    <Button
+                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                      onClick={() => copyToClipboard(toolDetails.installScripts.ubuntu, 'ubuntu-install')}
+                    >
+                      {copiedScript === 'ubuntu-install' ? 'コピーしました！' : 'コピー'}
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Arch Linux</h3>
+                  <div className="relative">
+                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+                      <code>{toolDetails.installScripts.arch}</code>
+                    </pre>
+                    <Button
+                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                      onClick={() => copyToClipboard(toolDetails.installScripts.arch, 'arch-install')}
+                    >
+                      {copiedScript === 'arch-install' ? 'コピーしました！' : 'コピー'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">Bashスクリプト</h2>
-              <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-                <code>{toolDetails.bashScript}</code>
-              </pre>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">アンインストール方法</h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Ubuntu</h3>
+                  <div className="relative">
+                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+                      <code>{toolDetails.uninstallScripts.ubuntu}</code>
+                    </pre>
+                    <Button
+                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                      onClick={() => copyToClipboard(toolDetails.uninstallScripts.ubuntu, 'ubuntu-uninstall')}
+                    >
+                      {copiedScript === 'ubuntu-uninstall' ? 'コピーしました！' : 'コピー'}
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 text-[#34495E]">Arch Linux</h3>
+                  <div className="relative">
+                    <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+                      <code>{toolDetails.uninstallScripts.arch}</code>
+                    </pre>
+                    <Button
+                      className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                      onClick={() => copyToClipboard(toolDetails.uninstallScripts.arch, 'arch-uninstall')}
+                    >
+                      {copiedScript === 'arch-uninstall' ? 'コピーしました！' : 'コピー'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">公式サイト</h2>
+              <a href={toolDetails.officialSite} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{toolDetails.officialSite}</a>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">参考サイト</h2>
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                {toolDetails.referenceSites.map((site, index) => (
+                  <li key={index}>
+                    <a href={site.url} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{site.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">関連ツール</h2>
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                {toolDetails.relatedTools.map((tool, index) => (
+                  <li key={index}>
+                    <Link href={tool.url} className="text-blue-600 hover:underline">
+                      {tool.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-[#2C3E50]">その他の情報</h2>
               <div className="grid grid-cols-2 gap-4 text-gray-700">
-                <div>
-                  <p><strong>公式サイト:</strong></p>
-                  <a href={toolDetails.officialSite} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{toolDetails.officialSite}</a>
-                </div>
                 <div>
                   <p><strong>対応OS:</strong></p>
                   <p>{toolDetails.supportedOS}</p>
