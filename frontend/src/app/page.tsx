@@ -1,24 +1,29 @@
 'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from 'next/link';
 import Header from '@/components/Header';
-function MainComponent() {
-  const [selectedCategory, setSelectedCategory] = React.useState("all");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
-  const categories = [
+function MainComponent() {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+
+  const [categories, setCategories] = useState([
     { name: "すべて", id: "all" },
     { name: "IDE", id: "ide" },
     { name: "テキストエディタ", id: "text-editor" },
     { name: "バージョン管理", id: "version-control" },
     { name: "デバッガー", id: "debugger" },
     { name: "ビルドツール", id: "build-tool" },
-  ];
+  ]);
 
   const tools = [
     {
@@ -69,6 +74,27 @@ function MainComponent() {
     ? tools
     : tools.filter(tool => tool.category === categories.find(cat => cat.id === selectedCategory)?.name);
 
+  const handleAddCategory = () => {
+    if (newCategoryName.trim() !== "") {
+      const newId = newCategoryName.toLowerCase().replace(/\s+/g, '-');
+      setCategories([...categories, { name: newCategoryName, id: newId }]);
+      setNewCategoryName("");
+      setIsAddCategoryDialogOpen(false);
+    }
+  };
+
+  const handleDeleteCategory = (categoryId: string) => {
+    if (categoryId === 'all') {
+      alert('「すべて」カテゴリーは削除できません。');
+      return;
+    }
+    const updatedCategories = categories.filter(cat => cat.id !== categoryId);
+    setCategories(updatedCategories);
+    if (selectedCategory === categoryId) {
+      setSelectedCategory('all');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-roboto text-[#333333]">
       <Header />
@@ -84,10 +110,20 @@ function MainComponent() {
             </Button>
           </div>
           <nav className={cn("md:block", isMobileMenuOpen ? "block" : "hidden")}>
-            <h2 className="text-xl font-semibold mb-4">カテゴリー</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">カテゴリー</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-[#3498DB] border-[#3498DB] hover:bg-[#3498DB] hover:text-white"
+                onClick={() => setIsAddCategoryDialogOpen(true)}
+              >
+                <i className="fas fa-plus mr-1"></i> 追加
+              </Button>
+            </div>
             <ul>
               {categories.map((category) => (
-                <li key={category.id} className="mb-2">
+                <li key={category.id} className="mb-2 flex items-center justify-between">
                   <Button
                     variant="ghost"
                     className={cn(
@@ -100,6 +136,16 @@ function MainComponent() {
                   >
                     {category.name}
                   </Button>
+                  {category.id !== 'all' && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-500 hover:bg-red-100 hover:text-red-700"
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      <i className="fas fa-trash-alt"></i>
+                    </Button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -153,6 +199,25 @@ function MainComponent() {
           </div>
         </section>
       </main>
+
+      <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>新しいカテゴリーを追加</DialogTitle>
+          </DialogHeader>
+          <Input
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            placeholder="カテゴリー名を入力"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddCategoryDialogOpen(false)}>
+              キャンセル
+            </Button>
+            <Button onClick={handleAddCategory}>追加</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="fixed bottom-8 right-8">
         <Link href="/add-tool" passHref>
